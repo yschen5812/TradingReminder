@@ -17,7 +17,7 @@ def getSellLimit(trades, func, **kw):
         ticker, trades = item[0], item[1]
         for trade in reversed(trades):
             date = trade["Date"]
-            ticker = trade["Ticker Name"]
+            ticker = trade["Ticker"]
             quantity = trade["Quantity"]
             value = trade["Value"]
 
@@ -40,7 +40,7 @@ def processBloombergPolicy(trades):
     boughtStocksToTrades = {}
     soldStocksToTrades = {}
     for trade in trades:
-        ticker, action = trade["Ticker Name"], trade["Action"]
+        ticker, action = trade["Ticker"], trade["Action"]
 
         if action == "sell":
             if ticker in soldStocksToTrades:

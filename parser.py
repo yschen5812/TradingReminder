@@ -15,7 +15,7 @@ def parseCmdArgs(args):
     parser_remind = subparsers.add_parser("update", aliases=["u"], help="The update mode. Insert new record.")
     parser_remind.add_argument(
         "-n",
-        "--tickername",
+        "--ticker",
         help="Ticker name",
         required=True)
 
@@ -52,6 +52,10 @@ def parseCmdArgs(args):
 
     # create a parser for 'List' command
     parser_list = subparsers.add_parser("list", aliases=["l"], help="Display current holdings")
+    parser_list.add_argument(
+        "-hf",
+        "--history",
+        help="History filename")
 
 
     return parser.parse_args(args)
