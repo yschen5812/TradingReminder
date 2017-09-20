@@ -70,6 +70,8 @@ def processBloombergPolicy(trades):
             q_s, q_b = int(soldTrade["Quantity"]), int(boughtTrade["Quantity"])
             while q_s >= q_b:
                 q_s -= q_b
+                if len(boughtStocksToTrades[ticker]) == 0:
+                    break
                 boughtTrade = boughtStocksToTrades[ticker].pop()
                 q_b = int(boughtTrade["Quantity"])
             boughtTrade["Quantity"] = str(q_b - q_s)
