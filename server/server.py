@@ -1,11 +1,11 @@
 import sys
-sys.path.insert(0, '../')
+sys.path.insert(0, "../")
 
 import main
 from io import StringIO
 from flask import request
 
-from flask import Flask
+from flask import Flask, url_for, send_from_directory
 app = Flask(__name__)
 
 cmdHandlers = {
@@ -17,9 +17,12 @@ cmdHandlers = {
     "list"  :  main.listRecords
 }
 
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, '../image'), 'terminal.ico')
+
 @app.route("/list")
 def listRecordsRP():
-    sys.argv.pop(0)
 
     output = StringIO()
     startupParms = { "historyFile": "../history.txt", "outputStream": output }
@@ -30,10 +33,13 @@ def listRecordsRP():
 
 @app.route("/remind")
 def remindSellLimitRP():
-    sys.argv.pop(0)
 
     output = StringIO()
     startupParms = { "historyFile": "../history.txt", "outputStream": output }
+
+    # requests arguments
+    if request.args.get("d") != None:
+        startupParms["detail"] = ""
 
     cmdHandlers["remind"](**startupParms)
     return output.getvalue()
@@ -41,7 +47,6 @@ def remindSellLimitRP():
 
 @app.route("/update")
 def updateHistoryRP():
-    sys.argv.pop(0)
 
     output = StringIO()
     startupParms = { "historyFile": "../history.txt", "outputStream": output }

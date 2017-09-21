@@ -4,8 +4,8 @@ import parser
 import writehistory
 import histreader
 import policy
-import color
-
+import color as Color
+import util
 
 columnWidth = 30
 defaultHistoryFile = "history.txt"
@@ -45,6 +45,7 @@ def showReminder(**kargs):
         "file": outputStream,
         "end": "<br>" if "outputStream" in args else "\n"
     }
+    color = Color.disabled() if "outputStream" in args else Color
     trades = histreader.readHistoryFile(histFilename)
     result = policy.getSellLimit(trades, policy.processBloombergPolicy)
 
@@ -69,7 +70,12 @@ def showReminder(**kargs):
             idxFormatStr = "{{0:>{}}}".format(numRecords)
             print("        ", (idxFormatStr + ".  Sell Limit at: " + color.G + "{1}" + color.W + ", Quantity: " + color.Y + "{2}" + color.W).format("i"*(subidx+1), limitedItem["limit"], limitedItem["quantity"]), **printOptions)
 
-    print("\n")
+    print(**printOptions)
+
+    if "detail" in args:
+        # show full information
+        totalInvest = util.calculateTotalInvest(trades)
+        print("Total investment amount: ${}".format(totalInvest), **printOptions)
 
 def listRecords(**kargs):
     print("listing...", kargs)

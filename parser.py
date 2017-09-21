@@ -48,6 +48,11 @@ def parseCmdArgs(args):
 
     # create a parser for 'Remind' command
     parser_remind = subparsers.add_parser("remind", aliases=["r"], help="Show what stocks/equities and the amount are permitted to be sold.")
+    parser_remind.add_argument(
+        "-dt",
+        "--detail",
+        help="Detail mode",
+        action="store_true")
     #group = parser_remind.add_mutually_exclusive_group(required=True)
 
     # create a parser for 'List' command
