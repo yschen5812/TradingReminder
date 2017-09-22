@@ -36,9 +36,10 @@ def getSellLimit(trades, func, **kw):
 
     return result
 
+
 def processBloombergPolicy(trades):
-    boughtStocksToTrades = {}
-    soldStocksToTrades = {}
+    boughtStocksToTrades, soldStocksToTrades = {}, {}
+
     for trade in trades:
         ticker, action = trade["Ticker"], trade["Action"]
 
@@ -61,27 +62,37 @@ def processBloombergPolicy(trades):
                 stack.appendleft(trade)
                 boughtStocksToTrades[ticker] = stack
 
-    # Eliminate sell and buy by FIFO policy
+
     for item in soldStocksToTrades.items():
         ticker, soldTrades = item[0], item[1]
+        boughtTrades = boughtStocksToTrades[ticker]
 
-        for soldTrade in reversed(soldTrades):
-            boughtTrade = boughtStocksToTrades[ticker].pop()
-            q_s, q_b = int(soldTrade["Quantity"]), int(boughtTrade["Quantity"])
-            while q_s >= q_b:
-                if len(boughtStocksToTrades[ticker]) == 0:
-                    break
-                q_s -= q_b
-                boughtTrade = boughtStocksToTrades[ticker].pop()
-                q_b = int(boughtTrade["Quantity"])
+        fifo_single_ticker(soldTrades, boughtTrades)
 
-            if q_b - q_s != 0:
-                boughtTrade["Quantity"] = str(q_b - q_s)
-                boughtStocksToTrades[ticker].append(boughtTrade)
-
+        boughtStocksToTrades[ticker] = boughtTrades
 
     return boughtStocksToTrades
 
+
+#
+# param soldTrades: deque
+# param boughtTrades: deque
+#
+def fifo_single_ticker(soldTrades, boughtTrades):
+    if len(soldTrades) == 0:
+        return;
+
+    soldTrade, boughtTrade = soldTrades.pop(), boughtTrades.pop()
+    q_s, q_b = int(soldTrade["Quantity"]), int(boughtTrade["Quantity"])
+
+    if q_s > q_b:
+        soldTrade["Quantity"] = str(q_s - q_b)
+        soldTrades.append(soldTrade)
+    elif q_s < q_b:
+        boughtTrade["Quantity"] = str(q_b - q_s)
+        boughtTrades.append(boughtTrade)
+
+    return fifo_single_ticker(soldTrades, boughtTrades)
 
 if __name__ == "__main__":
     histReader = __import__("histreader")

@@ -49,7 +49,7 @@ def parseCmdArgs(args):
     # create a parser for 'Remind' command
     parser_remind = subparsers.add_parser("remind", aliases=["r"], help="Show what stocks/equities and the amount are permitted to be sold.")
     parser_remind.add_argument(
-        "-dt",
+        "-d",
         "--detail",
         help="Detail mode",
         action="store_true")

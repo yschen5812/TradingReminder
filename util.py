@@ -1,6 +1,11 @@
 def calculateTotalInvest(trades):
     return round(sum(list(getInvestSummary(trades).values())), 2)
 
+def cacluateTotalProfit(trades):
+    pass
+
+
+# helper function
 def getInvestSummary(trades):
     result = {}
     for item in trades:
@@ -9,5 +14,4 @@ def getInvestSummary(trades):
         if not ticker in result:
             result[ticker] = 0
         result[ticker] += transaction
-
     return result

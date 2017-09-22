@@ -36,6 +36,8 @@ def showReminder(**kargs):
 
     if "fromCmd" in kargs:
         args = kargs["fromCmd"]
+        if "detail" in args and not args["detail"]:
+            del args["detail"]
     else:
         args = kargs
 
@@ -59,21 +61,22 @@ def showReminder(**kargs):
         if idx == numRecords-1:
             print(**printOptions)
 
-    numRecords = len(result["limited"])
     for idx, item in enumerate(result["limited"].items()):
+        numRecords = len(str(len(result["limited"])))
         if idx == 0:
             print("{0:=^50}".format(" Limited Holdings "), **printOptions)
-        idxFormatStr = "{{0:>{}d}}".format(numRecords)
-        print("    ", (idxFormatStr + ") Ticker: '" + color.R + "{1}" + color.W + "':").format(idx, item[0]), **printOptions)
+        idxFormatStr = "{{0:<{}}}".format(numRecords+1) # + ")"
+        print("    ", (idxFormatStr + " Ticker: '" + color.R + "{1}" + color.W + "':").format(str(idx)+")", item[0]), **printOptions)
         numRecords = len(item[1])
         for subidx, limitedItem in enumerate(reversed(item[1])):
-            idxFormatStr = "{{0:>{}}}".format(numRecords)
-            print("        ", (idxFormatStr + ".  Sell Limit at: " + color.G + "{1}" + color.W + ", Quantity: " + color.Y + "{2}" + color.W).format("i"*(subidx+1), limitedItem["limit"], limitedItem["quantity"]), **printOptions)
+            idxFormatStr = "{{0:>{}}}".format(numRecords + 1) # + "."
+            print("        ", (idxFormatStr + "  Sell Limit at: " + color.G + "{1}" + color.W + ", Quantity: " + color.Y + "{2}" + color.W).format("i"*(subidx+1)+".", limitedItem["limit"], limitedItem["quantity"]), **printOptions)
 
     print(**printOptions)
 
     if "detail" in args:
         # show full information
+        trades = histreader.readHistoryFile(histFilename)
         totalInvest = util.calculateTotalInvest(trades)
         print("Total investment amount: ${}".format(totalInvest), **printOptions)
 
