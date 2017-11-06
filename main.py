@@ -6,6 +6,7 @@ import histreader
 import policy
 import color as Color
 import util
+from collections import OrderedDict
 
 columnWidth = 30
 defaultHistoryFile = "history.txt"
@@ -52,6 +53,8 @@ def showReminder(**kargs):
     result = policy.getSellLimit(trades, policy.processBloombergPolicy)
 
     numRecords = len(result["no sell limit"])
+
+    result["no sell limit"] = OrderedDict(sorted(result["no sell limit"].items(), key=lambda i:i[0]))
     for idx, item in enumerate(result["no sell limit"].items()):
         if idx == 0:
             print("{0:=^50}".format(" No Sell Limit Holdings "), **printOptions)
@@ -61,6 +64,7 @@ def showReminder(**kargs):
         if idx == numRecords-1:
             print(**printOptions)
 
+    result["limited"] = OrderedDict(sorted(result["limited"].items(), key=lambda i:i[0]))
     for idx, item in enumerate(result["limited"].items()):
         numRecords = len(str(len(result["limited"])))
         if idx == 0:
@@ -101,6 +105,8 @@ def listRecords(**kargs):
     if len(hist) > 0:
         title = sorted(hist[0].keys())
 
+    title.append("Total")
+
     # Print title with reserved width for the line number
     lineNumberWidth = len(str(len(hist) + 1)) + 1
     strFormatList = ["{{{}:^{}}}".format(idx, columnWidth + lineNumberWidth) if idx == 0 else "{{{}:^{}}}".format(idx, columnWidth) for idx in range(len(title))]
@@ -109,7 +115,7 @@ def listRecords(**kargs):
     # Print records
     for idx, item in enumerate(hist):
         strFormatList = ["{{{}:^{}}}".format(idx, columnWidth) for idx in range(len(title))]
-        strValueList = [item[key] for key in title]
+        strValueList = [round(int(item["Quantity"])*float(item["Value"]), 2) if key == "Total" else item[key] for key in title]
         lineNumberStr = "{})".format(idx+1)
         lineNumberFormat = "{{0:>{}}}".format(lineNumberWidth)
         print(lineNumberFormat.format(lineNumberStr) + "|".join(strFormatList).format(*strValueList), **printOptions)

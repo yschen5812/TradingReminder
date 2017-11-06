@@ -22,6 +22,10 @@ cmdHandlers = {
 def favicon():
     return send_from_directory(os.path.join(app.root_path, '../image'), 'terminal.ico')
 
+@app.route("/apple-touch-icon.png")
+def appicon():
+    return send_from_directory(os.path.join(app.root_path, '../image'), 'terminal-icon.png')
+
 @app.route("/list")
 def listRecordsRP():
 
