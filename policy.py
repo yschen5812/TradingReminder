@@ -8,7 +8,7 @@ def getSellLimit(trades, func, **kw):
 
     result = {
         "no sell limit":{}, # {ticker: quantity(int)}
-        "limited": {}       # {ticker: deque( { limit: int, quantity: int } ) }
+        "limited": {}       # {ticker: deque( { limit: int, quantity: int, date: date} ) }
     }
 
     asOfDay = datetime.now().date() # Currently only handle current date
@@ -31,7 +31,7 @@ def getSellLimit(trades, func, **kw):
                 if not ticker in result["limited"]:
                     result["limited"][ticker] = deque()
                 stack = result["limited"][ticker]
-                stack.appendleft({"limit": value, "quantity": quantity})
+                stack.appendleft({"limit": value, "quantity": quantity, "date": date})
                 result["limited"][ticker] = stack
 
     return result

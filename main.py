@@ -6,6 +6,7 @@ import histreader
 import policy
 import color as Color
 import util
+from datetime import datetime
 from collections import OrderedDict
 
 columnWidth = 30
@@ -74,7 +75,12 @@ def showReminder(**kargs):
         numRecords = len(item[1])
         for subidx, limitedItem in enumerate(reversed(item[1])):
             idxFormatStr = "{{0:>{}}}".format(numRecords + 1) # + "."
-            print("        ", (idxFormatStr + "  Sell Limit at: " + color.G + "{1}" + color.W + ", Quantity: " + color.Y + "{2}" + color.W).format("i"*(subidx+1)+".", limitedItem["limit"], limitedItem["quantity"]), **printOptions)
+            printStr = "        " + (idxFormatStr + "  Sell Limit at: " + color.G + "{1}" + color.W + ", Quantity: " + color.Y + "{2}" + color.W).format("i"*(subidx+1)+".", limitedItem["limit"], limitedItem["quantity"])
+            if "detail" in args:
+                daysToLift = (limitedItem["date"] - datetime.now().date()).days + 30
+                spaceStr = "{{0:>{}d}}".format(80 - len(printStr))
+                printStr += (spaceStr + " days left").format(daysToLift)
+            print(printStr, **printOptions)
 
     print(**printOptions)
 
