@@ -79,7 +79,7 @@ def showReminder(**kargs):
             if "detail" in args:
                 daysToLift = (limitedItem["date"] - datetime.now().date()).days + 30
                 spaceStr = "{{0:>{}d}}".format(80 - len(printStr))
-                printStr += (spaceStr + " days left").format(daysToLift)
+                printStr += (", " + spaceStr + " days left").format(daysToLift)
             print(printStr, **printOptions)
 
     print(**printOptions)
